@@ -44,27 +44,27 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Ressources</h3>
             <ul className="space-y-2">
-  <li>
-    <Link href="/documentation" className="text-green-100 hover:text-white transition">
-      Documentation
-    </Link>
-  </li>
-  <li>
-    <Link href="/guide-pratique" className="text-green-100 hover:text-white transition">
-      Guide Pratique
-    </Link>
-  </li>
-  <li>
-    <Link href="/actualites/evenements" className="text-green-100 hover:text-white transition">
-  Actualités
-</Link>
-  </li>
-  <li>
-    <Link href="/guide-pratique#faq" className="text-green-100 hover:text-white transition">
-      FAQ
-    </Link>
-  </li>
-</ul>
+              <li>
+                <Link href="/ressources" className="text-green-100 hover:text-white transition">
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <Link href="/ressources/guides" className="text-green-100 hover:text-white transition">
+                  Guides Pratiques
+                </Link>
+              </li>
+              <li>
+                <Link href="/ressources/faq" className="text-green-100 hover:text-white transition">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/actualites" className="text-green-100 hover:text-white transition">
+                  Actualités
+                </Link>
+              </li>
+            </ul>
           </div>
 
           <div>
@@ -85,7 +85,7 @@ export default function Footer() {
                   className="flex items-center gap-2 hover:text-white transition"
                 >
                   <Phone className="h-5 w-5" />
-                  <span>+9190 307 884 28</span>
+                  <span>+90 307 884 28</span>
                 </a>
               </div>
             </address>
