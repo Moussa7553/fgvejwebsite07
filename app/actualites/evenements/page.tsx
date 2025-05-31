@@ -121,6 +121,13 @@ export default function EventsCalendarPage() {
                   className={index === 0 ? "bg-green-600 hover:bg-green-700" : ""}
                 >
                   {category}
+                  // Add this where you want the link to appear in your Actualités page
+<Link
+  href="/actualites/evenements"
+  className="inline-block mt-6 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+>
+  Voir le calendrier des événements
+</Link>
                 </Button>
               ))}
             </div>

@@ -11,6 +11,8 @@ export default function ResourcesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
+      <section id="faq">FAQ</section>
+<section id="guides">Guides</section>
       <section className="bg-green-900 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-6">Ressources et Documentation</h1>
@@ -38,6 +40,7 @@ export default function ResourcesPage() {
               <div className="flex items-center mb-8">
                 <div className="bg-green-100 p-3 rounded-full mr-4">
                   <FileText className="h-6 w-6 text-green-600" />
+                  <Link href="/ressources#guides">Guides</Link>
                 </div>
                 <h2 className="text-3xl font-bold">Guides et Fiches Pratiques</h2>
               </div>
@@ -260,9 +263,8 @@ export default function ResourcesPage() {
 
               <div className="text-center">
                 <Button asChild variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
-                  <Link href="/ressources/faq">
+                  <Link href="/ressources#faq">
                     Consulter la FAQ Complète
-                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </div>
