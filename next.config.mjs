@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', 
+  compress: true, 
+
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -8,8 +11,13 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb',
+      bodySizeLimit: '10mb', 
     },
+    esmExternals: 'loose', 
+    optimizePackageImports: [ 
+      '@radix-ui/react-*', 
+      'lucide-react'
+    ]
   },
   images: {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -19,7 +27,9 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-  },
+    
+    loader: 'default', 
+  }
 }
 
 export default nextConfig
