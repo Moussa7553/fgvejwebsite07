@@ -26,7 +26,6 @@ try {
   throw error
 }
 
-// Initialize services
 const auth: Auth = getAuth(app)
 const db: Firestore = getFirestore(app)
 const storage: FirebaseStorage = getStorage(app)
