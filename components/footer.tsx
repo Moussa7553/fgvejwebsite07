@@ -74,18 +74,18 @@ export default function Footer() {
               <p>Bamako, Mali</p>
               <div className="mt-4 space-y-2">
                 <a 
-                  href="mailto:n1964737@gmail.com" 
+                  href="mailto:FGVEJ@gmail.com" 
                   className="flex items-center gap-2 hover:text-white transition"
                 >
                   <Mail className="h-5 w-5" />
-                  <span>n1964737@gmail.com</span>
+                  <span>FGVEJ@gmail.com</span>
                 </a>
                 <a 
-                  href="tel:+9030788428" 
+                  href="tel:+22376428383" 
                   className="flex items-center gap-2 hover:text-white transition"
                 >
                   <Phone className="h-5 w-5" />
-                  <span>+90 307 884 28</span>
+                  <span>+22376428383</span>
                 </a>
               </div>
             </address>
@@ -127,7 +127,7 @@ export default function Footer() {
                 <Instagram className="h-6 w-6" />
               </Link>
               <Link 
-                href="https://wa.me/9030788428" 
+                href="https://wa.me/+22376428383" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-green-100 hover:text-white transition"
@@ -138,7 +138,7 @@ export default function Footer() {
                 </svg>
               </Link>
               <a 
-                href="mailto:n1964737@gmail.com" 
+                href="mailto:FGVEJ@gmail.com" 
                 className="text-green-100 hover:text-white transition"
               >
                 <span className="sr-only">Email</span>
