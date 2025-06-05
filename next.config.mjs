@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
+  output: 'standalone', 
+
   compress: true, 
 
   eslint: {
@@ -7,6 +10,17 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb', 
+    },
+    esmExternals: 'loose', 
+    optimizePackageImports: [ 
+      '@radix-ui/react-*', 
+      'lucide-react'
+    ]
   },
   images: {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
