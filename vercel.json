@@ -2,6 +2,8 @@
   "version": 2,
   "build": {
     "env": {},
-    "installCommand": "pnpm install --no-frozen-lockfile"
+    {
+  "buildCommand": "pnpm build"
+}
   }
 }
