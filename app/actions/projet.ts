@@ -4,6 +4,13 @@ import { connecterBaseDeDonnees } from "@/lib/mongodb"
 import Projet from "@/modeles/Projet"
 import { v4 as uuidv4 } from "uuid"
 
+interface ProjetType {
+  _id: string;
+  titre: string;
+  statut: string;
+  date_modification: Date;
+}
+
 export async function soumettreProjet(formData: FormData) {
   try {
     // Récupérer les données du formulaire
@@ -233,7 +240,7 @@ export async function updateProjectStatus(projectId: string, newStatus: string) 
         }
       },
       { new: true, lean: true }
-    )
+    ) as ProjetType | null;
 
     if (!projet) {
       console.error("Projet non trouvé:", projectId)
