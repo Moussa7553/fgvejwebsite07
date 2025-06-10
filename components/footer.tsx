@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Mail, Phone, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export default function Footer() {
+  // Footer component with contact information
   return (
     <footer className="bg-green-900 text-white py-12">
       <div className="container mx-auto px-4">
