@@ -88,14 +88,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Image
-            src="/placeholder.svg"
-            alt="FGVEJ Logo"
-            width={80}
-            height={80}
-            className="mx-auto"
-            style={{ objectFit: 'contain' }}
-          />
+          <img src="/Logo1.png" alt="FGVEJ Logo" />
           <h2 className="mt-6 text-3xl font-bold text-gray-900">Créer un compte</h2>
           <p className="mt-2 text-gray-600">Rejoignez FGVEJ pour soumettre et gérer vos projets écologiques</p>
         </div>

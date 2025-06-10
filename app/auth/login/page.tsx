@@ -74,7 +74,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Image
-            src="/placeholder.svg"
+            src="/Logo1.png"
             alt="FGVEJ Logo"
             width={80}
             height={80}
