@@ -1,7 +1,7 @@
 "use server"
 
-import { connecterBaseDeDonnees } from "@/lib/mongodb"
-import Projet from "@/modeles/Projet"
+import { connectToDatabase } from "@/lib/mongodb"
+import Projet from "@/models/Project"
 import { v4 as uuidv4 } from "uuid"
 
 interface ProjetType {
@@ -9,6 +9,29 @@ interface ProjetType {
   titre: string;
   statut: string;
   date_modification: Date;
+}
+
+interface FichierType {
+  nom: string;
+  type: string;
+  taille: number;
+  contenu: Buffer;
+  url: string;
+}
+
+interface ProjetDocument {
+  _id: string;
+  nom: string;
+  email: string;
+  telephone: string;
+  titre: string;
+  description: string;
+  montant: number;
+  fichiers: FichierType[];
+  statut: string;
+  date_creation: string;
+  date_modification?: Date;
+  toObject(): any;
 }
 
 export async function soumettreProjet(formData: FormData) {
@@ -68,7 +91,7 @@ export async function soumettreProjet(formData: FormData) {
     }
 
     // Établir la connexion à la base de données
-    const conn = await connecterBaseDeDonnees()
+    const conn = await connectToDatabase()
     if (!conn) {
       return {
         succes: false,
@@ -87,7 +110,7 @@ export async function soumettreProjet(formData: FormData) {
         const fileId = uuidv4()
 
         // Créer un objet fichier qui correspond exactement au schéma Mongoose
-        const fichierTraite = {
+        const fichierTraite: FichierType = {
           nom: fichier.name,
           type: fichier.type,
           taille: fichier.size,
@@ -174,7 +197,7 @@ export async function soumettreProjet(formData: FormData) {
 
 export async function getProjects() {
   try {
-    const conn = await connecterBaseDeDonnees();
+    const conn = await connectToDatabase();
     if (!conn) {
       return { succes: false, message: "Erreur de connexion à la base de données", projets: [] };
     }
@@ -183,10 +206,10 @@ export async function getProjects() {
     const projets = await Projet.find({});
 
     // Convertir les documents Mongoose en objets JavaScript simples et exclure le contenu des fichiers
-    const projetsObjet = projets.map(projet => {
+    const projetsObjet = projets.map((projet: ProjetDocument) => {
       const projetObj = projet.toObject();
       // Ne garder que les informations nécessaires des fichiers
-      projetObj.fichiers = projetObj.fichiers.map((fichier: any) => ({
+      projetObj.fichiers = projetObj.fichiers.map((fichier: FichierType) => ({
         nom: fichier.nom,
         type: fichier.type,
         taille: fichier.taille,
@@ -217,7 +240,7 @@ export async function updateProjectStatus(projectId: string, newStatus: string) 
   try {
     console.log("Tentative de mise à jour du statut:", { projectId, newStatus })
     
-    const conn = await connecterBaseDeDonnees()
+    const conn = await connectToDatabase()
     if (!conn) {
       console.error("Échec de la connexion à la base de données")
       return { succes: false, message: "Erreur de connexion à la base de données" }

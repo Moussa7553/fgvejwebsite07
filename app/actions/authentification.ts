@@ -4,9 +4,9 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { v4 as uuidv4 } from "uuid"
 import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
-import { connecterBaseDeDonnees } from "@/lib/mongodb"
-import Utilisateur from "@/modeles/Utilisateur"
+import jwt, { SignOptions } from "jsonwebtoken"
+import { connectToDatabase } from "@/lib/mongodb"
+import User from "@/models/User"
 
 const JWT_SECRET = process.env.JWT_SECRET || "votre_cle_secrete_jwt_tres_securisee"
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"
@@ -20,6 +20,12 @@ export interface TypeUtilisateur {
   role: "utilisateur" | "administrateur"
 }
 
+interface JWTPayload {
+  id: string
+  email: string
+  role: string
+}
+
 // Fonction pour hacher un mot de passe
 export async function hacherMotDePasse(motDePasse: string): Promise<string> {
   return await bcrypt.hash(motDePasse, 10)
@@ -30,23 +36,25 @@ export async function verifierMotDePasse(motDePasse: string, motDePasseHache: st
   return await bcrypt.compare(motDePasse, motDePasseHache)
 }
 
-// Fonction pour générer un token JWT - rendue asynchrone
+// Fonction pour générer un token JWT
 export async function genererToken(utilisateur: TypeUtilisateur): Promise<string> {
-  return jwt.sign(
-    {
-      id: utilisateur._id,
-      email: utilisateur.email,
-      role: utilisateur.role,
-    },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN },
-  )
+  const payload: JWTPayload = {
+    id: utilisateur._id,
+    email: utilisateur.email,
+    role: utilisateur.role,
+  }
+
+  const options: SignOptions = {
+    expiresIn: parseInt(JWT_EXPIRES_IN) || 7 * 24 * 60 * 60, // Convert to seconds or default to 7 days
+  }
+
+  return jwt.sign(payload, JWT_SECRET, options)
 }
 
-// Fonction pour vérifier un token JWT - rendue asynchrone
-export async function verifierToken(token: string): Promise<any> {
+// Fonction pour vérifier un token JWT
+export async function verifierToken(token: string): Promise<JWTPayload | null> {
   try {
-    return jwt.verify(token, JWT_SECRET)
+    return jwt.verify(token, JWT_SECRET) as JWTPayload
   } catch (erreur) {
     return null
   }
@@ -62,11 +70,11 @@ export async function actionInscription(donnees: {
   typeEntrepreneur: string
 }) {
   try {
-    await connecterBaseDeDonnees()
+    await connectToDatabase()
     const { prenom, nom, email, telephone, motDePasse, typeEntrepreneur } = donnees
 
     // Vérifier si l'utilisateur existe déjà
-    const utilisateurExistant = await Utilisateur.findOne({ email })
+    const utilisateurExistant = await User.findOne({ email })
     if (utilisateurExistant) {
       return { succes: false, message: "Un utilisateur avec cet email existe déjà" }
     }
@@ -75,7 +83,7 @@ export async function actionInscription(donnees: {
     const motDePasseHache = await hacherMotDePasse(motDePasse)
 
     // Créer un nouvel utilisateur
-    const nouvelUtilisateur = await Utilisateur.create({
+    const nouvelUtilisateur = await User.create({
       _id: uuidv4(),
       prenom,
       nom,
@@ -83,6 +91,9 @@ export async function actionInscription(donnees: {
       telephone,
       mot_de_passe: motDePasseHache,
       type_entrepreneur: typeEntrepreneur,
+      role: "utilisateur",
+      date_creation: new Date(),
+      date_modification: new Date()
     })
 
     console.log("Utilisateur créé avec succès:", nouvelUtilisateur)
@@ -101,11 +112,11 @@ export async function actionConnexion(donnees: {
   seSouvenir: boolean
 }) {
   try {
-    await connecterBaseDeDonnees()
+    await connectToDatabase()
     const { email, motDePasse, seSouvenir } = donnees
 
     // Trouver l'utilisateur par email
-    const utilisateur = await Utilisateur.findOne({ email })
+    const utilisateur = await User.findOne({ email })
     if (!utilisateur) {
       return { succes: false, message: "Email ou mot de passe incorrect" }
     }
@@ -129,7 +140,7 @@ export async function actionConnexion(donnees: {
     const token = await genererToken(objUtilisateur)
 
     // Définir le cookie d'authentification
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     cookieStore.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -146,14 +157,14 @@ export async function actionConnexion(donnees: {
 
 // Action pour la déconnexion
 export async function actionDeconnexion() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   cookieStore.delete("token")
   redirect("/")
 }
 
 // Fonction pour récupérer l'utilisateur actuel
 export async function obtenirUtilisateurActuel() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token = cookieStore.get("token")?.value
 
   if (!token) {
@@ -166,8 +177,8 @@ export async function obtenirUtilisateurActuel() {
       return null
     }
 
-    await connecterBaseDeDonnees()
-    const utilisateur = await Utilisateur.findById(decoded.id).select("-mot_de_passe")
+    await connectToDatabase()
+    const utilisateur = await User.findById(decoded.id).select("-mot_de_passe")
 
     if (!utilisateur) {
       return null

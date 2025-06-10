@@ -1,23 +1,17 @@
 import mongoose from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 
-const SchemaContact = new mongoose.Schema({
+const NotificationSchema = new mongoose.Schema({
   _id: {
     type: String,
     default: () => uuidv4(),
   },
-  nom: {
+  type: {
     type: String,
+    enum: ["project", "contact"],
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  telephone: {
-    type: String,
-  },
-  sujet: {
+  title: {
     type: String,
     required: true,
   },
@@ -25,15 +19,18 @@ const SchemaContact = new mongoose.Schema({
     type: String,
     required: true,
   },
-  statut: {
+  reference_id: {
     type: String,
-    enum: ["non_lu", "lu", "repondu"],
-    default: "non_lu",
+    required: true,
   },
-  date_creation: {
+  is_read: {
+    type: Boolean,
+    default: false,
+  },
+  created_at: {
     type: Date,
     default: Date.now,
   },
 })
 
-export default mongoose.models.Contact || mongoose.model("Contact", SchemaContact)
+export default mongoose.models.Notification || mongoose.model("Notification", NotificationSchema) 

@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema({
   },
 })
 
-// Mettre à jour le champ updated_at avant chaque sauvegarde
+// Update the updated_at field before each save
 UserSchema.pre("save", function (next) {
   this.updated_at = new Date()
   next()

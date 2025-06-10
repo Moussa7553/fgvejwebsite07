@@ -16,7 +16,6 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb', 
     },
-    esmExternals: 'loose', 
     optimizePackageImports: [ 
       '@radix-ui/react-*', 
       'lucide-react'
@@ -32,6 +31,7 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     
     loader: 'default', 
+    domains: ['images.unsplash.com'],
   }
 }
 

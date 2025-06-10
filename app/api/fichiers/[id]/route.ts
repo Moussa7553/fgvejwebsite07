@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { connecterBaseDeDonnees } from "@/lib/mongodb"
-import Projet from "@/modeles/Projet"
+import { connectToDatabase } from "@/lib/mongodb"
+import Projet from "@/models/Project"
 
 export async function GET(
   request: Request,
@@ -10,7 +10,7 @@ export async function GET(
   console.log("Tentative de téléchargement du fichier avec l'ID:", id)
   
   try {
-    const conn = await connecterBaseDeDonnees()
+    const conn = await connectToDatabase()
     if (!conn) {
       console.error("Échec de la connexion à la base de données")
       return new NextResponse("Erreur de connexion à la base de données", { status: 500 })
@@ -51,18 +51,15 @@ export async function GET(
       taille: fichier.taille
     })
 
-    // Créer la réponse avec le contenu du fichier
-    const response = new NextResponse(fichier.contenu)
-    
-    // Définir les en-têtes appropriés
-    response.headers.set("Content-Type", fichier.type)
-    response.headers.set("Content-Disposition", `attachment; filename="${fichier.nom}"`)
-    response.headers.set("Content-Length", fichier.taille.toString())
-
-    console.log("Fichier prêt à être téléchargé:", fichier.nom)
-    return response
-  } catch (erreur) {
-    console.error("Erreur détaillée lors du téléchargement du fichier:", erreur)
-    return new NextResponse("Erreur lors du téléchargement du fichier", { status: 500 })
+    // Retourner le fichier
+    return new NextResponse(fichier.contenu, {
+      headers: {
+        "Content-Type": fichier.type,
+        "Content-Disposition": `inline; filename="${fichier.nom}"`,
+      },
+    })
+  } catch (error) {
+    console.error("Erreur lors de la récupération du fichier:", error)
+    return new NextResponse("Erreur lors de la récupération du fichier", { status: 500 })
   }
 } 

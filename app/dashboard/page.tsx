@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import Image from "next/image"
 import { getProjects } from "@/app/actions/projet"
 import { useAuth } from "@/contexts/auth-context"
+import UserStatsCharts from "@/app/components/UserStatsCharts"
 
 interface Projet {
   _id: string;
@@ -226,6 +227,7 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+      <UserStatsCharts />
     </div>
   )
 }

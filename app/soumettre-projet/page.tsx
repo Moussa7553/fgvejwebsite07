@@ -6,13 +6,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-// Removed unused Select components
-// Removed unused Alert components
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText, Upload, Download, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
-// Re-import the backend action
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { soumettreProjet } from "@/app/actions/projet"
 
 // Données de démonstration pour les templates
@@ -55,43 +53,27 @@ export default function SubmitProjectPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
   const [files, setFiles] = useState<File[]>([])
+  const [errorMessage, setErrorMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  // Updated formData keys to match backend action
-  const [formData, setFormData] = useState({
-    nom: "",
-    email: "",
-    telephone: "",
-    titre: "",
-    description: "",
-    montant: "",
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  // Removed handleSelectChange as category field was removed
+  const formRef = useRef<HTMLFormElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files)
       const validFiles = newFiles.filter((file) => {
         const fileType = file.name.split(".").pop()?.toLowerCase()
-        // Ensure only allowed file types are added
         return (
           fileType === "pdf" || fileType === "ppt" || fileType === "pptx" || fileType === "doc" || fileType === "docx"
         )
       })
 
       if (validFiles.length !== newFiles.length) {
-        alert("Seuls les fichiers PDF, PowerPoint (PPT/PPTX) et Word (DOC/DOCX) sont acceptés.")
+        setErrorMessage("Seuls les fichiers PDF, PowerPoint (PPT/PPTX) et Word (DOC/DOCX) sont acceptés.")
+      } else {
+        setErrorMessage("")
       }
 
       setFiles((prev) => [...prev, ...validFiles])
-    } else {
-      // Clear files if the user cancels the file picker
-      setFiles([]);
     }
   }
 
@@ -100,51 +82,36 @@ export default function SubmitProjectPage() {
   }
 
   const handleTemplateDownload = (templatePath: string) => {
-    // Téléchargement direct du fichier
     window.open(templatePath, "_blank")
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setSubmissionSuccess(false); // Ensure success message is hidden on new submission attempt
+    setErrorMessage("")
 
     try {
-      const formDataToSend = new FormData()
-      
-      // Append form data using the correct backend keys
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value)
-      })
+      const formData = new FormData(e.currentTarget)
 
-      // Append files to the FormData under the 'fichiers' key
+      // Ajouter les fichiers au FormData
       files.forEach((file) => {
-        formDataToSend.append("fichiers", file)
+        formData.append("fichiers", file)
       })
 
-      // Call the backend action
-      const resultat = await soumettreProjet(formDataToSend)
+      const result = await soumettreProjet(formData)
 
-      if (resultat.succes) {
-        // Reset the form on success
-        setFormData({
-          nom: "",
-          email: "",
-          telephone: "",
-          titre: "",
-          description: "",
-          montant: "",
-        })
-        setFiles([])
+      if (result.succes) {
         setSubmissionSuccess(true)
-        alert("Projet soumis avec succès ! Notre équipe l'examinera dans les plus brefs délais.")
+        setFiles([])
+        if (formRef.current) {
+          formRef.current.reset()
+        }
       } else {
-        // Display error message from backend
-        alert(`Erreur lors de la soumission du projet: ${resultat.message || "Une erreur inconnue est survenue."}`)
+        setErrorMessage(result.message)
       }
     } catch (error) {
-      console.error("Erreur lors de la soumission du projet:", error)
-      alert("Une erreur est survenue lors de la soumission du projet. Veuillez réessayer.")
+      console.error("Erreur lors de la soumission:", error)
+      setErrorMessage("Une erreur est survenue lors de la soumission du projet. Veuillez réessayer.")
     } finally {
       setIsSubmitting(false)
     }
@@ -173,26 +140,29 @@ export default function SubmitProjectPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           {submissionSuccess ? (
-            // Success message section (using simple div and h2 as Alert component was removed)
-            <div className="max-w-3xl mx-auto text-center bg-green-50 border border-green-200 text-green-800 p-8 rounded-lg">
-              <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Projet soumis avec succès !</h2>
-              <p className="mb-6">
-                Votre projet a été soumis avec succès. Notre équipe l'examinera dans les plus brefs délais et vous
-                contactera pour les prochaines étapes.
-              </p>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Button asChild className="bg-green-600 hover:bg-green-700">
-                  <Link href="/">Retour à l'accueil</Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50"
-                  onClick={() => setSubmissionSuccess(false)}
-                >
-                  Soumettre un autre projet
-                </Button>
-              </div>
+            <div className="max-w-3xl mx-auto">
+              <Alert className="bg-green-50 border-green-200 mb-8">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <AlertTitle className="text-green-800 text-xl font-bold">Projet soumis avec succès !</AlertTitle>
+                <AlertDescription className="text-green-700">
+                  <p className="mb-4">
+                    Votre projet a été soumis avec succès. Notre équipe l'examinera dans les plus brefs délais et vous
+                    contactera pour les prochaines étapes.
+                  </p>
+                  <div className="flex flex-wrap gap-4 mt-6">
+                    <Button asChild className="bg-green-600 hover:bg-green-700">
+                      <Link href="/">Retour à l'accueil</Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-green-600 text-green-600 hover:bg-green-50"
+                      onClick={() => setSubmissionSuccess(false)}
+                    >
+                      Soumettre un autre projet
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
             </div>
           ) : (
             <Tabs defaultValue="submit" className="w-full">
@@ -209,16 +179,21 @@ export default function SubmitProjectPage() {
                   <div className="lg:col-span-2">
                     <Card>
                       <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        {errorMessage && (
+                          <Alert className="mb-6 border-red-200 bg-red-50">
+                            <AlertCircle className="h-4 w-4 text-red-600" />
+                            <AlertDescription className="text-red-700">{errorMessage}</AlertDescription>
+                          </Alert>
+                        )}
+
+                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                           <h2 className="text-2xl font-bold mb-6">Informations sur le Projet</h2>
 
                           <div className="space-y-2">
-                            <Label htmlFor="titre">Titre du Projet</Label>
+                            <Label htmlFor="titre">Nom du Projet</Label>
                             <Input
                               id="titre"
                               name="titre"
-                              value={formData.titre}
-                              onChange={handleChange}
                               placeholder="Ex: Recyclage des Déchets Plastiques"
                               required
                             />
@@ -229,8 +204,6 @@ export default function SubmitProjectPage() {
                             <Textarea
                               id="description"
                               name="description"
-                              value={formData.description}
-                              onChange={handleChange}
                               placeholder="Décrivez votre projet, ses objectifs et sa mise en œuvre..."
                               rows={5}
                               required
@@ -239,15 +212,7 @@ export default function SubmitProjectPage() {
 
                           <div className="space-y-2">
                             <Label htmlFor="montant">Montant du Financement Demandé (FCFA)</Label>
-                            <Input
-                              id="montant"
-                              name="montant"
-                              type="number"
-                              value={formData.montant}
-                              onChange={handleChange}
-                              placeholder="Ex: 15000000"
-                              required
-                            />
+                            <Input id="montant" name="montant" type="number" placeholder="Ex: 15000000" required />
                           </div>
 
                           <div className="space-y-2">
@@ -287,7 +252,7 @@ export default function SubmitProjectPage() {
                                         <FileText className="h-4 w-4 text-gray-500 mr-2" />
                                         <span className="text-sm truncate max-w-[200px] md:max-w-md">{file.name}</span>
                                         <span className="text-xs text-gray-500 ml-2">
-                                          ({(file.size / 1024 / 1024).toFixed(2)} MB) a
+                                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
                                         </span>
                                       </div>
                                       <Button
@@ -310,14 +275,7 @@ export default function SubmitProjectPage() {
 
                           <div className="space-y-2">
                             <Label htmlFor="nom">Nom Complet</Label>
-                            <Input
-                              id="nom"
-                              name="nom"
-                              value={formData.nom}
-                              onChange={handleChange}
-                              placeholder="Votre nom et prénom"
-                              required
-                            />
+                            <Input id="nom" name="nom" placeholder="Votre nom et prénom" required />
                           </div>
 
                           <div className="space-y-2">
@@ -326,8 +284,6 @@ export default function SubmitProjectPage() {
                               id="email"
                               name="email"
                               type="email"
-                              value={formData.email}
-                              onChange={handleChange}
                               placeholder="votre.email@exemple.com"
                               required
                             />
@@ -335,14 +291,7 @@ export default function SubmitProjectPage() {
 
                           <div className="space-y-2">
                             <Label htmlFor="telephone">Numéro de Téléphone</Label>
-                            <Input
-                              id="telephone"
-                              name="telephone"
-                              value={formData.telephone}
-                              onChange={handleChange}
-                              placeholder="+223 XX XX XX XX"
-                              required
-                            />
+                            <Input id="telephone" name="telephone" placeholder="+223 XX XX XX XX" required />
                           </div>
 
                           <div className="pt-4">

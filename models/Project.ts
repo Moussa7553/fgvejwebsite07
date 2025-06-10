@@ -1,21 +1,48 @@
 import mongoose from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 
-const ProjectSchema = new mongoose.Schema({
+// Définir le schéma pour les fichiers
+const FichierSchema = new mongoose.Schema({
+  nom: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    required: true
+  },
+  taille: {
+    type: Number,
+    required: true
+  },
+  url: {
+    type: String,
+    required: true
+  },
+  contenu: {
+    type: Buffer,
+    required: true
+  }
+}, { _id: false })
+
+const SchemaProjet = new mongoose.Schema({
   _id: {
     type: String,
-    default: () => uuidv4(),
-  },
-  user_id: {
-    type: String,
     required: true,
-    ref: "User",
   },
-  project_name: {
+  nom: {
     type: String,
     required: true,
   },
-  category: {
+  email: {
+    type: String,
+    required: true,
+  },
+  telephone: {
+    type: String,
+    required: true,
+  },
+  titre: {
     type: String,
     required: true,
   },
@@ -23,37 +50,34 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  impact: {
-    type: String,
-    required: true,
-  },
-  funding_amount: {
+  montant: {
     type: Number,
     required: true,
   },
-  timeline: {
-    type: Number,
+  fichiers: {
+    type: [FichierSchema],
     required: true,
+    default: []
   },
-  status: {
+  statut: {
     type: String,
-    enum: ["pending", "reviewing", "approved", "rejected"],
-    default: "pending",
+    enum: ["en_attente", "en_cours", "approuve", "rejete"],
+    default: "en_attente",
   },
-  created_at: {
+  date_creation: {
     type: Date,
     default: Date.now,
   },
-  updated_at: {
+  date_modification: {
     type: Date,
     default: Date.now,
   },
 })
 
-// Mettre à jour le champ updated_at avant chaque sauvegarde
-ProjectSchema.pre("save", function (next) {
-  this.updated_at = new Date()
+// Mettre à jour le champ date_modification avant chaque sauvegarde
+SchemaProjet.pre("save", function (next) {
+  this.date_modification = new Date()
   next()
 })
 
-export default mongoose.models.Project || mongoose.model("Project", ProjectSchema)
+export default mongoose.models.Projet || mongoose.model("Projet", SchemaProjet)

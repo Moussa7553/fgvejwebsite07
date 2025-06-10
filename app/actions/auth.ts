@@ -185,3 +185,15 @@ export async function getCurrentUser() {
     return null
   }
 }
+
+// Fonction pour récupérer tous les utilisateurs (pour les statistiques)
+export async function getAllUsers() {
+  try {
+    await connectToDatabase();
+    const users = await User.find({}, "_id first_name last_name email role created_at");
+    return { success: true, users };
+  } catch (error) {
+    console.error("Erreur lors de la récupération des utilisateurs:", error);
+    return { success: false, message: "Une erreur est survenue lors de la récupération des utilisateurs" };
+  }
+}

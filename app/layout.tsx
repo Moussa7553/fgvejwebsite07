@@ -11,8 +11,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FGVEJ - Fondation pour la Gestion Verte et l'Entrepreneuriat des Jeunes",
-  description: "Soutenir les jeunes entrepreneurs dans leurs projets écologiques et durables",
+  title: "FGVEJ - Fédération des Groupements Villageois d'Entraide des Jeunes",
+  description: "La FGVEJ est une organisation qui œuvre pour le développement des jeunes à travers des projets communautaires.",
   icons: {
     icon: [
       {
@@ -32,7 +32,12 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
             <div className="flex min-h-screen flex-col">
               <Navbar />
               <main className="flex-1">{children}</main>

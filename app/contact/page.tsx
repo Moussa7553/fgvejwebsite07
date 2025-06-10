@@ -43,15 +43,16 @@ export default function PageContact() {
     setEnSoumission(true)
 
     try {
-      const resultat = await envoyerFormulaire({
-        nom: donnees.nom,
-        email: donnees.email,
-        telephone: donnees.telephone,
-        sujet: donnees.sujet,
-        message: donnees.message,
-      })
+      const formData = new FormData()
+      formData.append("nom", donnees.nom)
+      formData.append("email", donnees.email)
+      formData.append("telephone", donnees.telephone)
+      formData.append("sujet", donnees.sujet)
+      formData.append("message", donnees.message)
 
-      if (resultat.succes) {
+      const resultat = await envoyerFormulaire(formData)
+
+      if (resultat.success) {
         toast({
           title: "Message envoyé",
           description: "Nous vous répondrons dans les plus brefs délais.",

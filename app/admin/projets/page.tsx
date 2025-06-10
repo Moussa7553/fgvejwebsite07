@@ -8,6 +8,7 @@ import ExportCSV from "@/app/components/ExportCSV"
 import GraphiquesProjets from "@/app/components/GraphiquesProjets"
 import Notifications from "@/app/components/Notifications"
 import { io } from "socket.io-client"
+import UserStatsCharts from "@/app/components/UserStatsCharts"
 
 interface Fichier {
   nom: string
@@ -172,6 +173,11 @@ export default function AdminProjets() {
       {/* Graphiques */}
       <div className="mb-8">
         <GraphiquesProjets />
+      </div>
+
+      {/* User Stats Charts */}
+      <div className="mb-8">
+        <UserStatsCharts />
       </div>
 
       {/* Recherche et filtres */}

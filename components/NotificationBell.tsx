@@ -1,7 +1,4 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { getProjects } from "@/app/actions/projet"
+import { useState, useEffect } from "react"
 import { Bell } from "lucide-react"
 import {
   Popover,
@@ -13,15 +10,15 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/hooks/use-toast"
 
 interface Notification {
-  id: string
+  _id: string
   type: "project" | "contact"
   title: string
   message: string
-  date: string
-  is_read: boolean
+  reference_id: string
+  created_at: string
 }
 
-export default function Notifications() {
+export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
@@ -58,7 +55,7 @@ export default function Notifications() {
 
       if (response.ok) {
         setNotifications((prev) =>
-          prev.filter((n) => n.id !== notificationId)
+          prev.filter((n) => n._id !== notificationId)
         )
       }
     } catch (error) {
@@ -78,8 +75,6 @@ export default function Notifications() {
     return () => clearInterval(interval)
   }, [])
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length
-
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -90,9 +85,9 @@ export default function Notifications() {
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
+          {notifications.length > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
-              {unreadCount}
+              {notifications.length}
             </span>
           )}
         </Button>
@@ -100,11 +95,11 @@ export default function Notifications() {
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
           <h4 className="font-semibold">Notifications</h4>
-          {unreadCount > 0 && (
+          {notifications.length > 0 && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => notifications.forEach((n) => markAsRead(n.id))}
+              onClick={() => notifications.forEach((n) => markAsRead(n._id))}
             >
               Tout marquer comme lu
             </Button>
@@ -123,9 +118,9 @@ export default function Notifications() {
             <div className="divide-y">
               {notifications.map((notification) => (
                 <div
-                  key={notification.id}
+                  key={notification._id}
                   className="p-4 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => markAsRead(notification._id)}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
@@ -134,7 +129,7 @@ export default function Notifications() {
                         {notification.message}
                       </p>
                       <p className="text-xs text-gray-400 mt-2">
-                        {new Date(notification.date).toLocaleString()}
+                        {new Date(notification.created_at).toLocaleString()}
                       </p>
                     </div>
                   </div>

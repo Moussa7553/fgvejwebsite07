@@ -1,92 +1,64 @@
 "use server"
 
-import { connecterBaseDeDonnees } from "@/lib/mongodb"
-import Contact from "@/modeles/Contact"
+import { connectToDatabase } from "@/lib/mongodb"
+import Contact from "@/models/Contact"
+import Notification from "@/models/Notification"
 import { v4 as uuidv4 } from "uuid"
 
-export async function envoyerFormulaire(donnees: {
-  nom: string
-  email: string
-  telephone?: string
-  sujet: string
-  message: string
-}) {
+export async function envoyerFormulaire(formData: FormData) {
   try {
-    // Valider les données
-    if (!donnees.nom || !donnees.email || !donnees.sujet || !donnees.message) {
-      return { 
-        succes: false, 
-        message: "Veuillez remplir tous les champs obligatoires" 
-      }
+    const nom = formData.get("nom") as string
+    const email = formData.get("email") as string
+    const telephone = formData.get("telephone") as string
+    const sujet = formData.get("sujet") as string
+    const message = formData.get("message") as string
+
+    console.log("Données reçues:", {
+      nom,
+      email,
+      telephone,
+      sujet,
+      message
+    })
+
+    if (!nom || !email || !telephone || !sujet || !message) {
+      console.log("Validation échouée - Champs manquants:", {
+        nom: !!nom,
+        email: !!email,
+        telephone: !!telephone,
+        sujet: !!sujet,
+        message: !!message
+      })
+      return { success: false, message: "Veuillez remplir tous les champs" }
     }
 
-    // Valider l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(donnees.email)) {
-      return { 
-        succes: false, 
-        message: "Veuillez entrer une adresse email valide" 
-      }
-    }
+    await connectToDatabase()
 
-    // Établir la connexion à la base de données
-    const conn = await connecterBaseDeDonnees()
-    if (!conn) {
-      return { 
-        succes: false, 
-        message: "Erreur de connexion à la base de données" 
-      }
-    }
-
-    const { nom, email, telephone, sujet, message } = donnees
-
-    // Créer le nouveau contact
-    const nouveauContact = await Contact.create({
+    // Créer le contact
+    const contact = await Contact.create({
       _id: uuidv4(),
       nom,
       email,
-      telephone: telephone || "",
+      telephone,
       sujet,
       message,
       statut: "non_lu",
-      date_creation: new Date(),
+      date_creation: new Date()
     })
 
-    if (!nouveauContact) {
-      return { 
-        succes: false, 
-        message: "Erreur lors de la création du message" 
-      }
-    }
+    // Créer la notification
+    await Notification.create({
+      type: "contact",
+      title: `Nouveau message de ${nom}`,
+      message: `Message reçu de ${nom} (${email}) concernant "${sujet}"`,
+      reference_id: contact._id,
+      is_read: false,
+      created_at: new Date()
+    })
 
-    console.log("Message de contact créé:", nouveauContact)
-
-    return { 
-      succes: true, 
-      message: "Message envoyé avec succès" 
-    }
-  } catch (erreur) {
-    console.error("Erreur lors de l'envoi du message:", erreur)
-    
-    // Gérer les erreurs spécifiques
-    if (erreur instanceof Error) {
-      if (erreur.name === 'ValidationError') {
-        return { 
-          succes: false, 
-          message: "Données invalides. Veuillez vérifier les informations saisies." 
-        }
-      }
-      if (erreur.name === 'MongoServerError') {
-        return { 
-          succes: false, 
-          message: "Erreur de serveur. Veuillez réessayer plus tard." 
-        }
-      }
-    }
-    
-    return { 
-      succes: false, 
-      message: "Une erreur est survenue lors de l'envoi du message" 
-    }
+    return { success: true, message: "Message envoyé avec succès" }
+  } catch (error) {
+    console.error("Erreur lors de l'envoi du message:", error)
+    throw error
   }
 }
