@@ -2,8 +2,6 @@
   "version": 2,
   "build": {
     "env": {},
-    {
-  "buildCommand": "pnpm build"
-}
+    "buildCommand": "pnpm build"
   }
 }
