@@ -132,3 +132,71 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For support, please contact [support email/contact information] 
+
+---
+
+## 1. **Commit Your Changes Locally**
+
+Make sure all your changes are committed in git:
+```bash
+git add .
+git commit -m "Update contact page, social links, and API info"
+```
+
+---
+
+## 2. **Push to GitHub (or your Git provider)**
+
+If your Vercel project is connected to a GitHub/GitLab/Bitbucket repo, push your changes:
+```bash
+git push origin main
+```
+> Replace `main` with your branch name if different.
+
+---
+
+## 3. **Vercel Will Deploy Automatically**
+
+- Vercel watches your repo.  
+- When you push to the connected branch, it triggers a new deployment automatically.
+- You can watch the deployment progress in your [Vercel dashboard](https://vercel.com/dashboard).
+
+---
+
+## 4. **Manual Deploy (if not using Git integration)**
+
+If you’re not using Git integration, you can:
+- Use the [Vercel CLI](https://vercel.com/docs/cli):
+  ```bash
+  npm i -g vercel
+  vercel
+  ```
+  Follow the prompts to deploy your project.
+
+---
+
+## 5. **Check Your Live Site**
+
+- Once deployed, visit your Vercel URL (shown in the dashboard or CLI output).
+- Test the contact page, social links, and API endpoints.
+
+---
+
+## 6. **(Optional) Environment Variables**
+
+If you added/changed any environment variables, set them in the Vercel dashboard under **Project Settings > Environment Variables**.
+
+---
+
+### **Summary Table**
+
+| Step                | Command/Action                        |
+|---------------------|---------------------------------------|
+| Commit changes      | `git add . && git commit -m "..."`    |
+| Push to Git         | `git push origin main`                |
+| Deploy (CLI)        | `vercel`                              |
+| Check deployment    | Visit your Vercel URL                 |
+
+---
+
+**Let me know if you want a step-by-step for a specific method (GitHub, CLI, etc.) or if you hit any errors!** 
