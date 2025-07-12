@@ -1,0 +1,5 @@
+[33m5909ffe[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix vercel.json: remove unsupported buildCommand property
+[33m911e1b8[m Update contact page, social links, and API info
+[33m4d5cfd9[m fix: correct JSON syntax in vercel.json
+[33mb9c63c5[m Update vercel.json
+[33m2d94b13[m For deployment
