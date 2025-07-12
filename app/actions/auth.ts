@@ -39,7 +39,7 @@ export async function generateToken(user: UserType): Promise<string> {
       role: user.role,
     },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN },
+    { expiresIn: JWT_EXPIRES_IN as string },
   )
 }
 
