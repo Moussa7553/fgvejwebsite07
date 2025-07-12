@@ -9,7 +9,7 @@ import { connectToDatabase } from "@/lib/mongodb"
 import User from "@/models/User"
 
 const JWT_SECRET = process.env.JWT_SECRET || "votre_cle_secrete_jwt_tres_securisee"
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"
+const JWT_EXPIRES_IN = 60 * 60 * 24 * 7; // 7 days in seconds
 
 // Types
 export interface TypeUtilisateur {
@@ -45,7 +45,7 @@ export async function genererToken(utilisateur: TypeUtilisateur): Promise<string
   }
 
   const options: SignOptions = {
-    expiresIn: parseInt(JWT_EXPIRES_IN) || 7 * 24 * 60 * 60, // Convert to seconds or default to 7 days
+    expiresIn: JWT_EXPIRES_IN,
   }
 
   return jwt.sign(payload, JWT_SECRET, options)

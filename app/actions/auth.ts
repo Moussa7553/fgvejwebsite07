@@ -44,7 +44,7 @@ export async function generateToken(user: UserType): Promise<string> {
 }
 
 // Fonction pour vérifier un token JWT
-export function verifyToken(token: string): any {
+export async function verifyToken(token: string): Promise<any> {
   try {
     return jwt.verify(token, JWT_SECRET)
   } catch (error) {
@@ -129,7 +129,7 @@ export async function loginAction(formData: {
     const token = await generateToken(userObj)
 
     // Définir le cookie d'authentification
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     cookieStore.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -146,14 +146,14 @@ export async function loginAction(formData: {
 
 // Action pour la déconnexion
 export async function logoutAction() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   cookieStore.delete("token")
   redirect("/")
 }
 
 // Fonction pour récupérer l'utilisateur actuel
 export async function getCurrentUser() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token = cookieStore.get("token")?.value
 
   if (!token) {
@@ -161,7 +161,7 @@ export async function getCurrentUser() {
   }
 
   try {
-    const decoded = verifyToken(token)
+    const decoded = await verifyToken(token)
     if (!decoded) {
       return null
     }

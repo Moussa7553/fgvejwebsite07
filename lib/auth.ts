@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 import { v4 as uuidv4 } from "uuid"
 
 const JWT_SECRET = process.env.JWT_SECRET || "votre_cle_secrete_jwt_tres_securisee"
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"
+const JWT_EXPIRES_IN = 60 * 60 * 24 * 7; // 7 days in seconds
 
 // Types
 export interface User {
@@ -35,7 +35,7 @@ export function generateToken(user: User): string {
       role: user.role,
     },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN },
+    { expiresIn: JWT_EXPIRES_IN }
   )
 }
 
