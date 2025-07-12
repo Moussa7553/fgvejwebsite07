@@ -9,7 +9,7 @@ import { connectToDatabase } from "@/lib/mongodb"
 import User from "@/models/User"
 
 const JWT_SECRET = process.env.JWT_SECRET || "votre_cle_secrete_jwt_tres_securisee"
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"
+const JWT_EXPIRES_IN = 60 * 60 * 24 * 7; // 7 days in seconds
 
 // Types
 export interface UserType {
@@ -30,7 +30,7 @@ export async function verifyPassword(password: string, hashedPassword: string): 
   return await bcrypt.compare(password, hashedPassword)
 }
 
-// Fonction pour générer un token JWT - rendue asynchrone
+// Fonction pour générer un token JWT
 export async function generateToken(user: UserType): Promise<string> {
   return jwt.sign(
     {
@@ -39,12 +39,12 @@ export async function generateToken(user: UserType): Promise<string> {
       role: user.role,
     },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN as string },
+    { expiresIn: JWT_EXPIRES_IN }
   )
 }
 
-// Fonction pour vérifier un token JWT - rendue asynchrone
-export async function verifyToken(token: string): Promise<any> {
+// Fonction pour vérifier un token JWT
+export function verifyToken(token: string): any {
   try {
     return jwt.verify(token, JWT_SECRET)
   } catch (error) {
@@ -161,7 +161,7 @@ export async function getCurrentUser() {
   }
 
   try {
-    const decoded = await verifyToken(token)
+    const decoded = verifyToken(token)
     if (!decoded) {
       return null
     }
