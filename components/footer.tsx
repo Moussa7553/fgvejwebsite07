@@ -82,11 +82,11 @@ export default function Footer() {
                   <span>FGVEJ@gmail.com</span>
                 </a>
                 <a 
-                  href="tel:+22376428383" 
+                  href="tel:0022366757011" 
                   className="flex items-center gap-2 hover:text-white transition"
                 >
                   <Phone className="h-5 w-5" />
-                  <span>+22376428383</span>
+                  <span>0022366757011</span>
                 </a>
               </div>
             </address>
@@ -128,7 +128,7 @@ export default function Footer() {
                 <Instagram className="h-6 w-6" />
               </Link>
               <Link 
-                href="https://wa.me/+22376428383" 
+                href="https://wa.me/0022366757011" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-green-100 hover:text-white transition"
