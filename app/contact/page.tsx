@@ -242,6 +242,7 @@ export default function PageContact() {
                     <div>
                       <h3 className="text-xl font-semibold mb-2">Téléphone</h3>
                       <p className="text-gray-700 font-semibold">+22374038383</p>
+                      <p className="text-gray-700 font-semibold">0022366757011</p>
                       <p className="text-sm text-gray-500 mt-1">Du lundi au vendredi, de 9h00 à 17h00</p>
                     </div>
                   </CardContent>
