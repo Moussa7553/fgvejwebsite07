@@ -92,3 +92,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.start-project-btn {
+  background: #fff;           /* White background */
+  color: #25603a;             /* Dark green text for contrast */
+  border: 2px solid #25603a;  /* Optional: green border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Optional: subtle shadow */
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  transition: background 0.2s, color 0.2s;
+}
+.start-project-btn:hover {
+  background: #25603a;
+  color: #fff;
+}
